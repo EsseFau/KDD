@@ -1,0 +1,148 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta http-equiv="Content-Style-Type" content="text/css">
+  <title></title>
+  <meta name="Generator" content="Cocoa HTML Writer">
+  <meta name="CocoaVersion" content="2575.4">
+  <style type="text/css">
+    p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
+    p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
+  </style>
+</head>
+<body>
+<p class="p1">&lt;!DOCTYPE html&gt;</p>
+<p class="p1">&lt;html&gt;</p>
+<p class="p1">&lt;head&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;title&gt;Synced Audio Player&lt;/title&gt;</p>
+<p class="p1">&lt;/head&gt;</p>
+<p class="p1">&lt;body&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;script&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>// ======== CONFIGURATION SECTION ========</p>
+<p class="p1"><span class="Apple-converted-space">        </span>const audioFiles = [</p>
+<p class="p1"><span class="Apple-converted-space">            </span>'https://www.dropbox.com/scl/fi/sg3ghspnz5ean1o27bj14/1.mp3?rlkey=smxb0kwiu2ak6bnzkt6btzr7j&amp;st=aikmx2wr&amp;raw=1',</p>
+<p class="p1"><span class="Apple-converted-space">            </span>'https://www.dropbox.com/scl/fi/rvpa52e5epurirga0kvl0/2.mp3?rlkey=feb1i0gnf83a1znq1jhvc75w5&amp;raw=1',</p>
+<p class="p1"><span class="Apple-converted-space">            </span>'https://www.dropbox.com/scl/fi/21rafdw8e6kg02iigys6l/3.mp3?rlkey=ah0h6ngrm8glnjmnwcb3oa2zv&amp;raw=1',</p>
+<p class="p1"><span class="Apple-converted-space">            </span>'https://www.dropbox.com/scl/fi/kgm2mjyz7gf8yag46lwcg/4.mp3?rlkey=473g707dvc0q28mhmat09ofkc&amp;raw=1',</p>
+<p class="p1"><span class="Apple-converted-space">            </span>'https://www.dropbox.com/scl/fi/hbcma05tdq4wo4yauw2lc/5.mp3?rlkey=q0pfpwuz87bv12bhn58fa3ll5&amp;raw=1'</p>
+<p class="p1"><span class="Apple-converted-space">        </span>];</p>
+<p class="p1"><span class="Apple-converted-space">        </span>const teacherTrack = 'https://www.dropbox.com/scl/fi/oj4m8v8kdgmsg1o47g0h6/l-rer.mp3?rlkey=i006ahfbobwmshzj7b4d0q38u&amp;raw=1';</p>
+<p class="p1"><span class="Apple-converted-space">        </span>const videoFile = 'https://www.dropbox.com/scl/fi/oroynyrpywph03a007rxo/video1.mp4?rlkey=0jhgsjfy73ikabwuomi1p14qf&amp;raw=1';</p>
+<p class="p1"><span class="Apple-converted-space">        </span>const startTime = { hour: 13, minute: 35 }; // Set the synchronized start time</p>
+<p class="p1"><span class="Apple-converted-space">        </span>const timeZoneOffset = 1; // UTC+1 (CET)</p>
+<p class="p1"><span class="Apple-converted-space">        </span>// =======================================</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;/script&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;div id="start-page"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;h1&gt;Select Your Mode&lt;/h1&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;button onclick="goToPage('student')"&gt;Elev&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;button onclick="goToPage('teacher')"&gt;Lærer&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;button onclick="goToPage('video')"&gt;Video&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;/div&gt;</p>
+<p class="p2"><span class="Apple-converted-space">    </span></p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;div id="student-page" style="display: none;"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;h1&gt;Welcome to the Synchronized Audio Experience&lt;/h1&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;p&gt;Waiting for start time...&lt;/p&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;p&gt;Assigned Track: &lt;span id="track-number"&gt;&lt;/span&gt;&lt;/p&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;/div&gt;</p>
+<p class="p2"><span class="Apple-converted-space">    </span></p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;div id="teacher-page" style="display: none;"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;h1&gt;Lærer&lt;/h1&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;p&gt;Waiting for start time...&lt;/p&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;/div&gt;</p>
+<p class="p2"><span class="Apple-converted-space">    </span></p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;div id="video-page" style="display: none;"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;h1&gt;Video&lt;/h1&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;p&gt;Waiting for start time...&lt;/p&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;video id="synced-video" width="600" controls&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;source src="" id="video-source" type="video/mp4"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>Your browser does not support the video tag.</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;/video&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;/div&gt;</p>
+<p class="p2"><span class="Apple-converted-space">    </span></p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;script&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>let assignedTrack;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>let audioContext = new (window.AudioContext || window.webkitAudioContext)();</p>
+<p class="p1"><span class="Apple-converted-space">        </span>let audioBuffer;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>let userType = '';</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>function goToPage(type) {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>document.getElementById("start-page").style.display = "none";</p>
+<p class="p1"><span class="Apple-converted-space">            </span>userType = type;</p>
+<p class="p2"><span class="Apple-converted-space">            </span></p>
+<p class="p1"><span class="Apple-converted-space">            </span>if (type === 'student') {</p>
+<p class="p1"><span class="Apple-converted-space">                </span>document.getElementById("student-page").style.display = "block";</p>
+<p class="p1"><span class="Apple-converted-space">                </span>assignedTrack = Math.floor(Math.random() * 5);</p>
+<p class="p1"><span class="Apple-converted-space">                </span>document.getElementById("track-number").innerText = assignedTrack + 1;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>setupAudio(audioFiles[assignedTrack]);</p>
+<p class="p1"><span class="Apple-converted-space">            </span>} else if (type === 'teacher') {</p>
+<p class="p1"><span class="Apple-converted-space">                </span>document.getElementById("teacher-page").style.display = "block";</p>
+<p class="p1"><span class="Apple-converted-space">                </span>setupAudio(teacherTrack);</p>
+<p class="p1"><span class="Apple-converted-space">            </span>} else if (type === 'video') {</p>
+<p class="p1"><span class="Apple-converted-space">                </span>document.getElementById("video-page").style.display = "block";</p>
+<p class="p1"><span class="Apple-converted-space">                </span>setupVideo();</p>
+<p class="p1"><span class="Apple-converted-space">            </span>}</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>async function loadAudio(url) {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>const response = await fetch(url);</p>
+<p class="p1"><span class="Apple-converted-space">            </span>const arrayBuffer = await response.arrayBuffer();</p>
+<p class="p1"><span class="Apple-converted-space">            </span>return await audioContext.decodeAudioData(arrayBuffer);</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>async function setupAudio(track) {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>audioBuffer = await loadAudio(track);</p>
+<p class="p1"><span class="Apple-converted-space">            </span>startSync();</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>function startSync() {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>setInterval(() =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">                </span>let now = new Date();</p>
+<p class="p1"><span class="Apple-converted-space">                </span>let nowUTC = new Date(now.getTime() + now.getTimezoneOffset() * 60000); // Convert to UTC</p>
+<p class="p1"><span class="Apple-converted-space">                </span>let targetTime = new Date();</p>
+<p class="p1"><span class="Apple-converted-space">                </span>targetTime.setUTCHours(startTime.hour - timeZoneOffset, startTime.minute, 0, 0); // Adjust to UTC+1</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">                </span>if (nowUTC.getUTCHours() === targetTime.getUTCHours() &amp;&amp;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>nowUTC.getUTCMinutes() === targetTime.getUTCMinutes()) {</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>playAudio();</p>
+<p class="p1"><span class="Apple-converted-space">                </span>}</p>
+<p class="p1"><span class="Apple-converted-space">            </span>}, 1000);</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>function playAudio() {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>let source = audioContext.createBufferSource();</p>
+<p class="p1"><span class="Apple-converted-space">            </span>source.buffer = audioBuffer;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>source.connect(audioContext.destination);</p>
+<p class="p1"><span class="Apple-converted-space">            </span>let now = audioContext.currentTime;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>let syncStartTime = new Date();</p>
+<p class="p1"><span class="Apple-converted-space">            </span>syncStartTime.setUTCHours(startTime.hour - timeZoneOffset, startTime.minute, 0, 0);</p>
+<p class="p1"><span class="Apple-converted-space">            </span>let delay = (syncStartTime - new Date()) / 1000;</p>
+<p class="p2"><span class="Apple-converted-space">            </span></p>
+<p class="p1"><span class="Apple-converted-space">            </span>if (delay &gt; 0) {</p>
+<p class="p1"><span class="Apple-converted-space">                </span>source.start(now + delay);</p>
+<p class="p1"><span class="Apple-converted-space">            </span>}</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>function setupVideo() {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>let video = document.getElementById("synced-video");</p>
+<p class="p1"><span class="Apple-converted-space">            </span>document.getElementById("video-source").src = videoFile;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>video.load();</p>
+<p class="p1"><span class="Apple-converted-space">            </span>setInterval(() =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">                </span>let now = new Date();</p>
+<p class="p1"><span class="Apple-converted-space">                </span>let nowUTC = new Date(now.getTime() + now.getTimezoneOffset() * 60000);</p>
+<p class="p1"><span class="Apple-converted-space">                </span>let targetTime = new Date();</p>
+<p class="p1"><span class="Apple-converted-space">                </span>targetTime.setUTCHours(startTime.hour - timeZoneOffset, startTime.minute, 0, 0);</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">                </span>if (nowUTC.getUTCHours() === targetTime.getUTCHours() &amp;&amp;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>nowUTC.getUTCMinutes() === targetTime.getUTCMinutes()) {</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>video.currentTime = 0;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>video.play();</p>
+<p class="p1"><span class="Apple-converted-space">                </span>}</p>
+<p class="p1"><span class="Apple-converted-space">            </span>}, 1000);</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;/script&gt;</p>
+<p class="p1">&lt;/body&gt;</p>
+<p class="p1">&lt;/html&gt;</p>
+</body>
+</html>
