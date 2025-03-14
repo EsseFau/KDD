@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Synced Audio Player</title>
+</head>
+<body>
+    <script>
+        // ======== CONFIGURATION SECTION ========
+        const audioFiles = [
+            'https://www.dropbox.com/scl/fi/sg3ghspnz5ean1o27bj14/1.mp3?rlkey=smxb0kwiu2ak6bnzkt6btzr7j&st=aikmx2wr&raw=1',
+            'https://www.dropbox.com/scl/fi/rvpa52e5epurirga0kvl0/2.mp3?rlkey=feb1i0gnf83a1znq1jhvc75w5&raw=1',
+            'https://www.dropbox.com/scl/fi/21rafdw8e6kg02iigys6l/3.mp3?rlkey=ah0h6ngrm8glnjmnwcb3oa2zv&raw=1',
+            'https://www.dropbox.com/scl/fi/kgm2mjyz7gf8yag46lwcg/4.mp3?rlkey=473g707dvc0q28mhmat09ofkc&raw=1',
+            'https://www.dropbox.com/scl/fi/hbcma05tdq4wo4yauw2lc/5.mp3?rlkey=q0pfpwuz87bv12bhn58fa3ll5&raw=1'
+        ];
+        const teacherTrack = 'https://www.dropbox.com/scl/fi/oj4m8v8kdgmsg1o47g0h6/l-rer.mp3?rlkey=i006ahfbobwmshzj7b4d0q38u&raw=1';
+        const videoFile = 'https://www.dropbox.com/scl/fi/oroynyrpywph03a007rxo/video1.mp4?rlkey=0jhgsjfy73ikabwuomi1p14qf&raw=1';
+        const startTime = { hour: 13, minute: 35 }; // Set the synchronized start time
+        const timeZoneOffset = 1; // UTC+1 (CET)
+        // =======================================
+    </script>
+
+    <div id="start-page">
+        <h1>Select Your Mode</h1>
+        <button onclick="goToPage('student')">Elev</button>
+        <button onclick="goToPage('teacher')">Lærer</button>
+        <button onclick="goToPage('video')">Video</button>
+    </div>
+    
+    <div id="student-page" style="display: none;">
+        <h1>Welcome to the Synchronized Audio Experience</h1>
+        <p>Waiting for start time...</p>
+        <p>Assigned Track: <span id="track-number"></span></p>
+    </div>
+    
+    <div id="teacher-page" style="display: none;">
+        <h1>Lærer</h1>
+        <p>Waiting for start time...</p>
+    </div>
+    
+    <div id="video-page" style="display: none;">
+        <h1>Video</h1>
+        <p>Waiting for start time...</p>
+        <video id="synced-video" width="600" controls>
+            <source src="" id="video-source" type="video/mp4">
+            Your browser does not support the video tag.
+        </video>
+    </div>
+    
+    <script>
+        let assignedTrack;
+        let audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        let audioBuffer;
+        let userType = '';
+
+        function goToPage(type) {
+            document.getElementById("start-page").style.display = "none";
+            userType = type;
+            
+            if (type === 'student') {
+                document.getElementById("student-page").style.display = "block";
+                assignedTrack = Math.floor(Math.random() * 5);
+                document.getElementById("track-number").innerText = assignedTrack + 1;
+                setupAudio(audioFiles[assignedTrack]);
+            } else if (type === 'teacher') {
+                document.getElementById("teacher-page").style.display = "block";
+                setupAudio(teacherTrack);
+            } else if (type === 'video') {
+                document.getElementById("video-page").style.display = "block";
+                setupVideo();
+            }
+        }
+
+        async function loadAudio(url) {
+            const response = await fetch(url);
+            const arrayBuffer = await response.arrayBuffer();
+            return await audioContext.decodeAudioData(arrayBuffer);
+        }
+
+        async function setupAudio(track) {
+            audioBuffer = await loadAudio(track);
+            startSync();
+        }
+
+        function startSync() {
+            setInterval(() => {
+                let now = new Date();
+                let nowUTC = new Date(now.getTime() + now.getTimezoneOffset() * 60000); // Convert to UTC
+                let targetTime = new Date();
+                targetTime.setUTCHours(startTime.hour - timeZoneOffset, startTime.minute, 0, 0); // Adjust to UTC+1
+
+                if (nowUTC.getUTCHours() === targetTime.getUTCHours() &&
+                    nowUTC.getUTCMinutes() === targetTime.getUTCMinutes()) {
+                    playAudio();
+                }
+            }, 1000);
+        }
+
+        function playAudio() {
+            let source = audioContext.createBufferSource();
+            source.buffer = audioBuffer;
+            source.connect(audioContext.destination);
+            let now = audioContext.currentTime;
+            let syncStartTime = new Date();
+            syncStartTime.setUTCHours(startTime.hour - timeZoneOffset, startTime.minute, 0, 0);
+            let delay = (syncStartTime - new Date()) / 1000;
+            
+            if (delay > 0) {
+                source.start(now + delay);
+            }
+        }
+
+        function setupVideo() {
+            let video = document.getElementById("synced-video");
+            document.getElementById("video-source").src = videoFile;
+            video.load();
+            setInterval(() => {
+                let now = new Date();
+                let nowUTC = new Date(now.getTime() + now.getTimezoneOffset() * 60000);
+                let targetTime = new Date();
+                targetTime.setUTCHours(startTime.hour - timeZoneOffset, startTime.minute, 0, 0);
+
+                if (nowUTC.getUTCHours() === targetTime.getUTCHours() &&
+                    nowUTC.getUTCMinutes() === targetTime.getUTCMinutes()) {
+                    video.currentTime = 0;
+                    video.play();
+                }
+            }, 1000);
+        }
+    </script>
+</body>
+</html>
